@@ -74,11 +74,11 @@ class File(Item):
         """
         计算并保存file_type、isimage、file_tags
         """
-        if self.Hash is None or '':
+        if self.Hash is None:
             data_bytes = self.FileData.read()
             self.Hash = hashlib.sha256(data_bytes).hexdigest()
 
-        if self.Name is None:
+        if self.Name is None or '':
             print(self.FileData.name)
             self.Name = self.FileData.name
         if self.FileSize is None:
