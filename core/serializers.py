@@ -11,12 +11,11 @@ class ItemSerializer(FlexFieldsModelSerializer):
 class FileSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = File
-        fields = ['Id', 'Name', 'Owner', 'DateUpload', 'Hash', 'FileData', 'FileExtension', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
+        fields = ['Id', 'Name', 'Owner', 'DateUpload', 'Hash', 'FileData', 'FileType', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
 
         extra_kwargs = {
 
             'Owner': {'read_only': True},
-            'FileExtension': {'read_only': True, 'required': False},
             'Hash': {'read_only': True},
             'FileSize': {'read_only': True},
             'IsImage': {'read_only': True, 'required': False},

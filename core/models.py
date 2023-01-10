@@ -14,7 +14,7 @@ from .storage import OverwriteStorage, GetHashName
 class Item(models.Model):
     Id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     #名称
-    Name = models.CharField(max_length=257, blank=False, editable=True)
+    Name = models.CharField(max_length=256, default=None)
     #创建者
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -46,13 +46,13 @@ class File(Item):
     #借用JDrive的代码，存储为哈希值，并且数据库中不重复存储
     FileData = models.FileField(upload_to=GetHashName, storage=OverwriteStorage)
     #文件拓展，这里我不知道为什么他要写CharFiled，是否有自动识别的代码，然后添加文件类型
-    FileExtension = models.CharField(max_length=10)
+    # FileExtension = models.CharField(max_length=10)
     #这个也不是很懂，后面再看吧。
     #在序列化的时候要注意，这个是不需要序列化的，是在反序列化的时候自动生成的
     FileType = models.CharField(max_length=20, default=None)
     #应该有计算文件大小的代码
     FileSize = models.DecimalField(
-        max_digits=99, decimal_places=90, validators=[MinValueValidator(0.01)], default=None
+        max_digits=10, decimal_places=3, default=None
     )
     # #先放在这里吧
     # TempFileId = models.UUIDField(blank=True, null=True)
@@ -79,7 +79,6 @@ class File(Item):
             self.Hash = hashlib.sha256(data_bytes).hexdigest()
 
         if self.Name is None or '':
-            print(self.FileData.name)
             self.Name = self.FileData.name
         if self.FileSize is None:
             self.FileSize = self.FileData.size
