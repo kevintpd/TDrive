@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from .models import User, RegisterInfo
 # Create your views here.
 from .serializers import UserSerializer, RegisterSerializer
@@ -17,6 +17,13 @@ class UserListView(ListCreateAPIView):
 
 class RegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
+
+class LoggedInUserDetailView(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter(id=user.id)
 
 @api_view(['GET'])
 def sendcode_view(request):
