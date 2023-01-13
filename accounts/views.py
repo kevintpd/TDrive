@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from .models import User, RegisterInfo
 # Create your views here.
 from .serializers import UserSerializer, RegisterSerializer
@@ -14,6 +14,7 @@ from django.core.mail import send_mail
 class UserListView(ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
 class RegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
@@ -83,5 +84,3 @@ def sendcode_view(request):
             pass
         content = {"msg": "code have send again"}
         return Response(content, status=status.HTTP_201_CREATED)
-
-

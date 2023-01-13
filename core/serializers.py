@@ -11,7 +11,7 @@ class ItemSerializer(FlexFieldsModelSerializer):
 class FileSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = File
-        fields = ['Id', 'Name', 'Owner', 'DateUpload', 'Hash', 'FileData', 'FileType', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
+        fields = ['Id', 'Name', 'Owner', 'Creator', 'DateUpload', 'Hash', 'FileData', 'FileType', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
 
         extra_kwargs = {
 
@@ -42,7 +42,7 @@ class FolderSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ['Id', 'Name', 'Owner', 'ParentFolder', 'SubFolders', 'Files', 'DateCreated', 'DateModified']
+        fields = ['Id', 'Name', 'Owner', 'Creator', 'ParentFolder', 'SubFolders', 'Files', 'DateCreated', 'DateModified']
         extra_kwargs = {
             'Id': {'read_only': True},
             'SubFolders': {'read_only': True},

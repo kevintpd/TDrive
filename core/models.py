@@ -15,9 +15,10 @@ class Item(models.Model):
     Id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     #名称
     Name = models.CharField(max_length=256, default=None)
-    #创建者
+    #拥有者
     Owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    #创建者
+    Creator = models.ForeignKey(User, on_delete=models.CASCADE)
     @property
     def size(self):
         #判断Item类的子类是否是file

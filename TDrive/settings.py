@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "accounts.apps.AccountsConfig",
-    "core.apps.CoreConfig"
+    "core.apps.CoreConfig",
+    "shareapi.apps.ShareapiConfig",
 ]
 
 MIDDLEWARE = [
