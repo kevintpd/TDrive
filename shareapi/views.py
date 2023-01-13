@@ -8,7 +8,7 @@ from .models import ShareItem
 from .utils import get_all_item_under
 from core.permissions import ItemPermission
 # Create your views here.
-class MyShareListItemCreateView(generics.ListCreateAPIView):
+class ShareItemListView(generics.ListCreateAPIView):
     serializer_class = ShareItemSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -20,7 +20,7 @@ class MyShareListItemCreateView(generics.ListCreateAPIView):
         items = get_all_item_under(serializer.validated_data['Root'])
         serializer.save(Owner = self.request.user, Items = items)
 
-class MyShareItemDetailView(generics.RetrieveUpdateDestroyAPIView):
+class MyShareDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ShareItemSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -28,7 +28,7 @@ class MyShareItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user.pk
         return ShareItem.objects.filter(Q(Owner=user))
 
-class JoinedShareItemListView(generics.ListAPIView):
+class JoinedShareListView(generics.ListAPIView):
     serializer_class = JoinedListSerializer
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
