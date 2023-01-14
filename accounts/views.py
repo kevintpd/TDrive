@@ -82,5 +82,5 @@ def sendcode_view(request):
         except:
             # TODO: Handle unable to send mail situation
             pass
-        content = {"msg": "code have send again"}
+        content = {"msg": "code has been send"}
         return Response(content, status=status.HTTP_201_CREATED)

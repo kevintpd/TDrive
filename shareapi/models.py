@@ -6,6 +6,7 @@ from django.utils.datetime_safe import datetime
 
 from core.models import Item, Folder
 
+
 # Create your models here.
 class ShareItem(models.Model):
     """
@@ -34,24 +35,26 @@ class ShareItem(models.Model):
     4.非空文件夹以及所有东西的删除权限只有share的owner有
     """
     Id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    #因为是m2m，所以这里要单独做一个owner字段，用于标识是share的，在文件非共享之后，回到Owner的文件夹下
-    Owner = models.ForeignKey('accounts.User',on_delete=models.CASCADE, related_name='CreatedShares')
+    # 因为是m2m，所以这里要单独做一个owner字段，用于标识是share的，在文件非共享之后，回到Owner的文件夹下
+    Owner = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='CreatedShares')
     # 这里可以通过hasattr(Folder/File/Item,'shared')来判断这个东西是否被共享了，那我的共享obj怎么查就可以解决了
-    Items = models.ManyToManyField('core.Item', on_delete=models.CASCADE, related_name='shares')
-    #来确定哪个是分享的根文件夹
+    Items = models.ManyToManyField(Item, related_name='shares')
+    # 来确定哪个是分享的根文件夹
     Root = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='RelatedShares')
     CreatedTime = models.DateTimeField(auto_now=True)
     OutdatedTime = models.DateTimeField(blank=True, null=True)
     # 这里可以通过request.user.JoinedShares 来获取自己所加入的所有的共享obj，那我加入的共享怎么查就可以解决了
     Members = models.ManyToManyField('accounts.User', blank=True, related_name='JoinedShares')
-    Code = models.CharField(blank=True, null=True, max_length=8, default=None)
+    Code = models.CharField(max_length=8, default=None)
+    Description = models.CharField(max_length=100,default=None)
 
     class ShareTypeChoices(models.IntegerChoices):
         Public = 1
         Selective = 2
-    ShareType = models.IntegerField(choices=ShareTypeChoices)
+
+    ShareType = models.IntegerField(choices=ShareTypeChoices.choices)
 
     def save(self, *args, **kwargs):
-        if self.Code == None:
+        if self.Code is None or "":
             self.Code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
-        super().save(self, *args, **kwargs)
+        super().save(*args, **kwargs)

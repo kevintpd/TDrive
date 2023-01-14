@@ -1,19 +1,21 @@
 from django.db.models import Q
 from django.shortcuts import render
-from rest_framework import generics, permissions
-from .serializers import ShareItemSerializer, JoinedListSerializer
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+
+from .serializers import ShareItemSerializer, JoinListSerializer
 from core.serializers import FileSerializer, FolderSerializer
 from core.models import Folder, File, Item
 from .models import ShareItem
 from .utils import get_all_item_under
-from core.permissions import ItemPermission
+from core.permissions import ItemPermission,ShareAddItemPermission
 # Create your views here.
 class ShareItemListView(generics.ListCreateAPIView):
     serializer_class = ShareItemSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user.pk
+        user = self.request.user
         return ShareItem.objects.filter(Q(Owner = user))
 
     def perform_create(self, serializer):
@@ -29,43 +31,49 @@ class MyShareDetailView(generics.RetrieveUpdateDestroyAPIView):
         return ShareItem.objects.filter(Q(Owner=user))
 
 class JoinedShareListView(generics.ListAPIView):
-    serializer_class = JoinedListSerializer
+    serializer_class = JoinListSerializer
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
         user = self.request.user.pk
         return ShareItem.objects.filter(Q(Members = user))
+class JoinShareView(generics.RetrieveUpdateAPIView):
+    serializer_class = JoinListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = ShareItem.objects.all()
+    def perform_update(self, serializer):
+        shareitem = ShareItem.objects.get(Id = self.kwargs['pk'])
+        shareitem.Members.add(self.request.user)
+class AllShareListView(generics.ListAPIView):
+    serializer_class = JoinListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = ShareItem.objects.all()
 
 class ShareFolderCreateView(generics.CreateAPIView):
     serializer_class = FolderSerializer
-    #TODO 写权限，谁有权限创建
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, ShareAddItemPermission]
 
     def perform_create(self, serializer):
-        owner = ShareItem.objects.get(Id = self.kwargs['pk'])
-        serializer.save(Owner = owner, Creator = self.request.user)
-
-
+        shareitem = ShareItem.objects.get(Id = self.kwargs['pk'])
+        serializer.save(Owner = shareitem.Owner, Creator = self.request.user)
+        shareitem.Items.add(serializer.instance)
 class ShareFileCreateView(generics.CreateAPIView):
     serializer_class = FileSerializer
-    #TODO 写权限，谁有权限创建
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, ShareAddItemPermission]
 
     def perform_create(self, serializer):
-        owner = ShareItem.objects.get(Id=self.kwargs['pk'])
-        serializer.save(Owner=owner, Creator=self.request.user)
+        shareitem = ShareItem.objects.get(Id=self.kwargs['pk'])
+        serializer.save(Owner=shareitem.Owner, Creator=self.request.user)
+        shareitem.Items.add(serializer.instance)
+    def create(self, request, *args, **kwargs):
+
+        super().create(self, request, *args, **kwargs)
 
 class ShareFolderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FolderSerializer
     permission_classes = [permissions.IsAuthenticated, ItemPermission]
-
-    def get_queryset(self):
-        folderid = self.kwargs['pk']
-        return Folder.objects.get_queryset(Q(Id = folderid))
+    queryset = Folder.objects.all()
 
 class ShareFileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated, ItemPermission]
-
-    def get_queryset(self):
-        fileid = self.kwargs['pk']
-        return File.objects.get_queryset(Q(Id = fileid))
+    queryset = File.objects.all()

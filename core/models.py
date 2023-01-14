@@ -16,7 +16,7 @@ class Item(models.Model):
     #名称
     Name = models.CharField(max_length=256, default=None)
     #拥有者
-    Owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    Owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="items")
     #创建者
     Creator = models.ForeignKey(User, on_delete=models.CASCADE)
     @property
@@ -68,8 +68,7 @@ class File(Item):
     # 上传日期
     DateUpload = models.DateTimeField(blank=False, auto_now_add=True, editable=False)
     Hash = models.CharField(max_length=64, default=None)
-    is_file = True
-    is_folder = False
+    ItemType = models.CharField(max_length=10, default="File")
 
     def save(self, *args, **kwargs):
         """
@@ -118,8 +117,7 @@ class Folder(Item):
     DateCreated = models.DateTimeField(blank=False, auto_now_add=True)
     # 修改日期
     DateModified = models.DateTimeField(auto_now=True)
-    is_file = False
-    is_folder = True
+    ItemType = models.CharField(max_length=10, default="Folder")
 
     @property
     def size(self):
@@ -147,6 +145,7 @@ def create_drive(sender, instance, created, **kwargs):
             Name="root",
             Owner=instance,
             ParentFolder=None,
+            Creator=instance,
         )
         instance.root_drive = drive
         instance.save()
