@@ -9,6 +9,7 @@ from core.models import Folder, File, Item
 from .models import ShareItem
 from .utils import get_all_item_under
 from core.permissions import ItemPermission,ShareAddItemPermission
+from rest_flex_fields import FlexFieldsModelViewSet
 # Create your views here.
 class ShareItemListView(generics.ListCreateAPIView):
     serializer_class = ShareItemSerializer
@@ -45,7 +46,7 @@ class JoinShareView(generics.RetrieveUpdateAPIView):
         shareitem.Members.add(self.request.user)
 class AllShareListView(generics.ListAPIView):
     serializer_class = JoinListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     queryset = ShareItem.objects.all()
 
 class ShareFolderCreateView(generics.CreateAPIView):
@@ -68,7 +69,7 @@ class ShareFileCreateView(generics.CreateAPIView):
 
         super().create(self, request, *args, **kwargs)
 
-class ShareFolderDetailView(generics.RetrieveUpdateDestroyAPIView):
+class ShareFolderDetailView(generics.RetrieveUpdateDestroyAPIView, FlexFieldsModelViewSet):
     serializer_class = FolderSerializer
     permission_classes = [permissions.IsAuthenticated, ItemPermission]
     queryset = Folder.objects.all()

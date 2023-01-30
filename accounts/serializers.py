@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 
 from .models import User, RegisterInfo
 from rest_framework import serializers
@@ -48,3 +48,19 @@ class UserSerializer(FlexFieldsModelSerializer):
             'email':{'required': True},
             'root_dirve':{'read_only': True}
         }
+
+class UserSigninSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = None
+
+    def validate(self, attrs):
+        self.user = authenticate(username=attrs.get("username"), password=attrs.get('password'))
+        if self.user:
+            if not self.user.is_active:
+                raise serializers.ValidationError('inactive_account')
+            return attrs
+        else:
+            raise serializers.ValidationError('invalid_credentials')

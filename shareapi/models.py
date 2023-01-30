@@ -46,7 +46,7 @@ class ShareItem(models.Model):
     # 这里可以通过request.user.JoinedShares 来获取自己所加入的所有的共享obj，那我加入的共享怎么查就可以解决了
     Members = models.ManyToManyField('accounts.User', blank=True, related_name='JoinedShares')
     Code = models.CharField(max_length=8, default=None)
-    Description = models.CharField(max_length=100,default=None)
+    Description = models.CharField(max_length=100, default="无")
 
     class ShareTypeChoices(models.IntegerChoices):
         Public = 1

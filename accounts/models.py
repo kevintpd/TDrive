@@ -6,6 +6,7 @@ from django.db import models
 # Create your models here.
 #继承自AbstractUser 添加一些自己的属性，然后在setting中更改系统使用的User模型，使其与系统认证匹配
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     root_drive = models.OneToOneField('core.Folder',
                                  on_delete=models.SET_NULL,
                                  null=True,

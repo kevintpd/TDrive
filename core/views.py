@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.encoding import escape_uri_path
 # Create your views here.
 from rest_framework import generics, status, permissions
-from rest_flex_fields import FlexFieldsModelViewSet
+from rest_flex_fields import FlexFieldsModelViewSet, is_expanded
 from rest_framework.response import Response
 
 from .models import File,Folder,Item
@@ -22,6 +22,22 @@ class FolderListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(Owner = self.request.user, Creator = self.request.user)
+
+class FolderRoot(generics.ListAPIView, FlexFieldsModelViewSet):
+    permit_list_expands = ['Files', 'SubFolders']
+    serializer_class = FolderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # for optimization purpose we prefetch expands area to reduce the database hits
+        expands = [x for x in self.permit_list_expands if is_expanded(self.request, x)]
+        if expands:
+            return Folder.objects.filter(Q(Owner=user) & Q(ParentFolder=None)).prefetch_related(*expands)
+        ##
+
+        return Folder.objects.filter(Q(Owner=user) & Q(ParentFolder=None))
 
 class FolderDetailView(generics.RetrieveUpdateDestroyAPIView, FlexFieldsModelViewSet):
     serializer_class = FolderSerializer

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-$##3hd0yd+_42fb5%^hy4=_9)(#j%#kqh$o)n_9znd1j$tczl@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -143,3 +143,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD","WDKIOSVULLVPJMPL")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL","TianC313@126.com")
 EMAIL_TIMEOUT = 300
+
+REST_FRAMEWORK = {
+    # 指定用于支持coreapi的Schema
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+}

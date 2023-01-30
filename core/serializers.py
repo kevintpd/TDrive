@@ -16,6 +16,7 @@ class FileSerializer(FlexFieldsModelSerializer):
         extra_kwargs = {
 
             'Owner': {'read_only': True},
+            'Creator': {'read_only': True},
             'Hash': {'read_only': True},
             'FileSize': {'read_only': True},
             'IsImage': {'read_only': True, 'required': False},
@@ -44,6 +45,9 @@ class FolderSerializer(FlexFieldsModelSerializer):
         model = Folder
         fields = ['Id', 'Name', 'Owner', 'Creator', 'ParentFolder', 'SubFolders', 'Files', 'DateCreated', 'DateModified']
         extra_kwargs = {
+            'Owner': {'read_only': True},
+            'Creator': {'read_only': True},
+            'Files': {'read_only': True},
             'Id': {'read_only': True},
             'SubFolders': {'read_only': True},
             'DateCreated': {'read_only': True},

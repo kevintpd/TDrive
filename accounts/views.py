@@ -1,10 +1,11 @@
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from .models import User, RegisterInfo
 # Create your views here.
-from .serializers import UserSerializer, RegisterSerializer
-from rest_framework.generics import ListCreateAPIView, CreateAPIView
+from .serializers import UserSerializer, RegisterSerializer, UserSigninSerializer
+from rest_framework.generics import ListCreateAPIView, CreateAPIView, GenericAPIView
 import hashlib
 from TDrive.settings import SECRET_KEY, DEFAULT_FROM_EMAIL
 from django.utils import timezone
@@ -21,10 +22,27 @@ class RegisterView(CreateAPIView):
 
 class LoggedInUserDetailView(generics.ListAPIView):
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
         return User.objects.filter(id=user.id)
+class UserSigninAPIView(GenericAPIView):
+    authentication_classes = ()
+    permission_classes = ()
+    serializer_class = UserSigninSerializer
+
+    def post(self, request, *args, **kwargs):
+        # print(request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+        data = {"username": user.username}
+
+        return Response(
+            data=data,
+            status=status.HTTP_200_OK
+        )
 
 @api_view(['GET'])
 def sendcode_view(request):
@@ -60,7 +78,7 @@ def sendcode_view(request):
                 # TODO: Handle unable to send mail situation
                 pass
             content = {"msg": "code have send again"}
-            return Response(content, status=status.HTTP_201_CREATED)
+            return Response(content, status=status.HTTP_200_OK)
         # 如果没过期，则提示失败，验证码依然有效
         else:
             content = {"msg": "code has been send"}
@@ -83,4 +101,4 @@ def sendcode_view(request):
             # TODO: Handle unable to send mail situation
             pass
         content = {"msg": "code has been send"}
-        return Response(content, status=status.HTTP_201_CREATED)
+        return Response(content, status=status.HTTP_200_OK)

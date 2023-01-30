@@ -134,6 +134,7 @@ class Folder(Item):
             folder = folder.location
         return "/".join(path[::-1])
 
+
     def __str__(self):
         return self.Name
 
