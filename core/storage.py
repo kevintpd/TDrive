@@ -11,6 +11,7 @@ class OverwriteStorage(FileSystemStorage):
 
 
 def GetHashName(instance, filename):
+
     _, ext = os.path.splitext(filename)
     if instance.Hash is None:
         instance.FileData.open()

@@ -56,6 +56,7 @@ class FileListView(generics.ListCreateAPIView):
         return File.objects.filter(Q(Owner = user))
 
     def perform_create(self, serializer):
+        print(self.request.data)
         serializer.save(Owner = self.request.user, Creator = self.request.user)
 
 class FileDetailView(generics.RetrieveUpdateDestroyAPIView):

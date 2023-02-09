@@ -1,7 +1,9 @@
 from rest_flex_fields import FlexFieldsModelSerializer
 from rest_framework import serializers
 
+from accounts.models import User
 from .models import Item, File, Folder
+from accounts.serializers import UserSerializer
 
 class ItemSerializer(FlexFieldsModelSerializer):
     class Meta:
@@ -11,12 +13,13 @@ class ItemSerializer(FlexFieldsModelSerializer):
 class FileSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = File
-        fields = ['Id', 'Name', 'Owner', 'Creator', 'DateUpload', 'Hash', 'FileData', 'FileType', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
+        fields = ['Id', 'Name', 'Owner', 'Creator', 'IsShared', 'DateUpload', 'Hash', 'FileData', 'FileType', 'FileSize', 'IsImage', 'FileTags', 'ParentFolder']
 
         extra_kwargs = {
 
             'Owner': {'read_only': True},
             'Creator': {'read_only': True},
+            'IsShared': {'read_only': True},
             'Hash': {'read_only': True},
             'FileSize': {'read_only': True},
             'IsImage': {'read_only': True, 'required': False},
@@ -43,11 +46,12 @@ class FolderSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ['Id', 'Name', 'Owner', 'Creator', 'ParentFolder', 'SubFolders', 'Files', 'DateCreated', 'DateModified']
+        fields = ['Id', 'Name', 'Owner', 'Creator', 'IsShared','ParentFolder', 'SubFolders', 'Files', 'DateCreated', 'DateModified']
         extra_kwargs = {
             'Owner': {'read_only': True},
             'Creator': {'read_only': True},
             'Files': {'read_only': True},
+            'IsShared': {'read_only': True},
             'Id': {'read_only': True},
             'SubFolders': {'read_only': True},
             'DateCreated': {'read_only': True},

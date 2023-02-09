@@ -35,6 +35,7 @@ class ShareItem(models.Model):
     4.非空文件夹以及所有东西的删除权限只有share的owner有
     """
     Id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    Name = models.CharField(max_length=256, default=None)
     # 因为是m2m，所以这里要单独做一个owner字段，用于标识是share的，在文件非共享之后，回到Owner的文件夹下
     Owner = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='CreatedShares')
     # 这里可以通过hasattr(Folder/File/Item,'shared')来判断这个东西是否被共享了，那我的共享obj怎么查就可以解决了
@@ -57,4 +58,6 @@ class ShareItem(models.Model):
     def save(self, *args, **kwargs):
         if self.Code is None or "":
             self.Code = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
+        if self.Name is None or "":
+            self.Name = self.Root.Name
         super().save(*args, **kwargs)

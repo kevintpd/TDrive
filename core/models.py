@@ -19,6 +19,8 @@ class Item(models.Model):
     Owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="items")
     #创建者
     Creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    #是否共享
+    IsShared = models.BooleanField(default=False)
     @property
     def size(self):
         #判断Item类的子类是否是file
@@ -95,6 +97,7 @@ class File(Item):
             self.FileTags = self.Name.split('.')[0]
         except:
             self.FileTags = None
+
         super().save(*args, **kwargs)
 
     def __str__(self):

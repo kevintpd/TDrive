@@ -1,16 +1,27 @@
 from rest_flex_fields import FlexFieldsModelSerializer
 from rest_framework import serializers
+
 from core.models import Item
 from .models import ShareItem
+from core.serializers import FolderSerializer
+from accounts.serializers import UserSerializer
+
 class ShareItemSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = ShareItem
-        fields = ['Id', 'Owner', 'Items', 'Root', 'CreatedTime', 'OutdatedTime', 'Members', 'Code', 'ShareType', 'Description']
+        fields = ['Id', 'Name', 'Owner', 'Items', 'Root', 'CreatedTime', 'OutdatedTime', 'Members', 'Code', 'ShareType',
+                  'Description']
         extra_kwargs = {
             'CreatedTime': {'read_only': True},
+            'Name': {'read_only': True},
             'Id': {'read_only': True},
             'Items': {'read_only': True},
             'Owner': {'read_only': True},
+        }
+        expandable_fields = {
+            'Owner': UserSerializer,
+            'Root': FolderSerializer,
+            'Members': (UserSerializer, {'many':True}),
         }
 
     def validate_Root(self, Root):
@@ -21,10 +32,12 @@ class ShareItemSerializer(FlexFieldsModelSerializer):
         else:
             return Root
 
+
 class JoinListSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = ShareItem
-        fields = ['Id', 'Owner', 'Root', 'CreatedTime', 'OutdatedTime', 'Members', 'ShareType', 'Description']
+        fields = ['Id', 'Name', 'Owner', 'Items', 'Root', 'CreatedTime', 'OutdatedTime', 'Members', 'Code', 'ShareType',
+                  'Description']
         extra_kwargs = {
             'Id': {'read_only': True},
             'Owner': {'read_only': True},
@@ -34,4 +47,9 @@ class JoinListSerializer(FlexFieldsModelSerializer):
             # 'Members': {'read_only': True},
             'ShareType': {'read_only': True},
             'Description': {'read_only': True},
+        }
+        expandable_fields = {
+            'Owner': UserSerializer,
+            'Root': FolderSerializer,
+            'Members': (UserSerializer, {'many': True}),
         }
