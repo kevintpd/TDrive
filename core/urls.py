@@ -9,4 +9,6 @@ urlpatterns = [
     path('items/', views.ItemListView.as_view()),
     path('filedownload/<str:id>', views.FileDownloadView.as_view()),
     path('folderdownload/<str:id>', views.FolderDownloadView.as_view()),
+    path('folderSearch/', views.FolderSearchView.as_view()),
+    path('fileSearch/', views.FileSearchView.as_view()),
 ]

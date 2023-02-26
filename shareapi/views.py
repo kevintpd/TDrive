@@ -90,10 +90,25 @@ class JoinShareView(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         shareitem = ShareItem.objects.get(Id = self.kwargs['pk'])
         shareitem.Members.add(self.request.user)
-class AllShareListView(generics.ListAPIView):
+
+
+class QuitShareView(generics.RetrieveUpdateAPIView):
     serializer_class = JoinListSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = ShareItem.objects.all()
+    def perform_update(self, serializer):
+        shareitem = ShareItem.objects.get(Id = self.kwargs['pk'])
+        shareitem.Members.remove(self.request.user)
+class AllShareListView(generics.ListAPIView,FlexFieldsModelViewSet):
+    permit_list_expands = ['Root', 'Owner', 'Members']
+    serializer_class = JoinListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        expands = [x for x in self.permit_list_expands if is_expanded(self.request, x)]
+        if expands:
+            return ShareItem.objects.filter(~Q(Members__in = [self.request.user])).prefetch_related(*expands)
+        return ShareItem.objects.filter(~Q(Members__in = [self.request.user]))
 
 class ShareFolderCreateView(generics.CreateAPIView):
     serializer_class = FolderSerializer

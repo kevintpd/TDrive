@@ -7,7 +7,8 @@ urlpatterns = [
 
     path('joinedshare/', views.JoinedShareListView.as_view({'get': 'list'})),
     path('joinshare/<str:pk>', views.JoinShareView.as_view()),
-    path('AllShare/', views.AllShareListView.as_view()),
+    path('quitShare/<str:pk>', views.QuitShareView.as_view()),
+    path('AllShare/', views.AllShareListView.as_view({'get': 'list'})),
     path('Refresh/',views.RefreshShareListView.as_view()),
 
 

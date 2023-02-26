@@ -59,6 +59,25 @@ class FileListView(generics.ListCreateAPIView):
         print(self.request.data)
         serializer.save(Owner = self.request.user, Creator = self.request.user)
 
+class FileSearchView(generics.ListAPIView):
+    serializer_class = FileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user.pk
+        searchWord = self.request.query_params["searchWord"]
+        return File.objects.filter(Q(Owner = user) & (Q(Name__contains=searchWord.strip("\"")) | Q(FileTags__contains=searchWord.strip("\""))))
+
+class FolderSearchView(generics.ListAPIView):
+    serializer_class = FolderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user.pk
+        searchWord = self.request.query_params["searchWord"]
+
+        return Folder.objects.filter(Q(Owner=user) & Q(Name__contains=searchWord.strip("\"")))
+
 class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated]
