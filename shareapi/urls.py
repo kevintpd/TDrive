@@ -16,4 +16,7 @@ urlpatterns = [
     path('uploadfiletoshare/<str:pk>', views.ShareFileCreateView.as_view()),
     path('sharefolder/<str:pk>', views.ShareFolderDetailView.as_view({'get': 'retrieve'})),
     path('sharefile/<str:pk>', views.ShareFileDetailView.as_view()),
+
+    path('searchsharefile/', views.SearchShareFileView.as_view()),
+
 ]

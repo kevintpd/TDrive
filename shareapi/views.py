@@ -131,7 +131,25 @@ class ShareFolderDetailView(generics.RetrieveUpdateDestroyAPIView, FlexFieldsMod
     permission_classes = [permissions.IsAuthenticated, ItemPermission]
     queryset = Folder.objects.all()
 
+    def get_queryset(self):
 
+        return super().get_queryset()
+
+
+class SearchShareFileView(generics.ListAPIView):
+    serializer_class = FileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        searchWord = self.request.query_params["searchWord"]
+        shareItem = ShareItem.objects.filter(Members= user)
+        file_all_list = []
+        for shareitem in shareItem:
+            for item in shareitem.Items.all():
+                if hasattr(item, 'drive_file'):
+                    file_all_list.append(item.Id)
+        return File.objects.filter(Q(Id__in = file_all_list) & Q(Name__contains=searchWord.strip("\"")))
 class ShareFileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated, ItemPermission]
