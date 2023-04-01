@@ -23,5 +23,7 @@ urlpatterns = [
     path("", include('accounts.urls')),
     path("", include('core.urls')),
     path("", include('shareapi.urls')),
+    path("", include('autolabel.urls')),
+
     path("docs/", include_docs_urls(title="接口文档", description="总路由"))
 ]

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "core.apps.CoreConfig",
     "shareapi.apps.ShareapiConfig",
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,5 @@ REST_FRAMEWORK = {
     # 指定用于支持coreapi的Schema
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
+
+AUTO_LABEL_TIME = 2

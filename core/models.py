@@ -61,7 +61,7 @@ class File(Item):
     # TempFileId = models.UUIDField(blank=True, null=True)
     #判断是否为照片
     IsImage = models.BooleanField(blank=False, default=False)
-    #文件夹标签，这里用字符串来代替列表，用,来隔开，使用的时候再用一个split分开
+    #文件夹标签，这里用字符串来代替列表，用|来隔开，使用的时候再用一个split分开
     FileTags = models.CharField(max_length=200, default=None)
     #文件的位置
     ParentFolder = models.ForeignKey(
