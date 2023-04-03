@@ -50,10 +50,8 @@ class FolderSerializer(FlexFieldsModelSerializer):
         extra_kwargs = {
             'Owner': {'read_only': True},
             'Creator': {'read_only': True},
-            'Files': {'read_only': True},
             'IsShared': {'read_only': True},
             'Id': {'read_only': True},
-            'SubFolders': {'read_only': True},
             'DateCreated': {'read_only': True},
             'DateModified': {'read_only': True},
         }
