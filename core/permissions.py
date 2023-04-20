@@ -13,20 +13,21 @@ class ItemPermission(permissions.BasePermission):
         queryset_type1 = queryset.filter(ShareType=1)
         print(queryset)
         print(ShareItem.objects.filter(Q(Items=obj)))
-        match request.method:
-            case 'GET':
-                if queryset.exists():
-                    return True
-            case 'DELETE':
-                if hasattr(obj, "drive_folder") and obj.Creator == request.user and len(
-                        obj.Files.all()) == 0 and queryset_type1.exists():
-                    return True
-                if hasattr(obj, "drive_file") and obj.Creator == request.user and queryset_type1.exists():
-                    return True
-            case 'PUT':
-                if obj.Creator == request.user and queryset_type1.exists():
-                    return True
-        return False
+        if request.method == 'GET':
+            if queryset.exists():
+                return True
+        elif request.method == 'DELETE':
+            if hasattr(obj, "drive_folder") and obj.Creator == request.user and len(
+                    obj.Files.all()) == 0 and queryset_type1.exists():
+                return True
+            if hasattr(obj, "drive_file") and obj.Creator == request.user and queryset_type1.exists():
+                return True
+        elif request.method == 'PUT':
+            if obj.Creator == request.user and queryset_type1.exists():
+                return True
+        else:
+            return False
+
 
 
 class ShareAddItemPermission(permissions.BasePermission):

@@ -42,6 +42,14 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "shareapi.apps.ShareapiConfig",
     'django_apscheduler',
+    "index",
+
+]
+
+STATIC_URL = './index/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, './index/static/')
 ]
 
 MIDDLEWARE = [
@@ -83,6 +91,14 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
+    # "default": {
+    #     "ENGINE": "django.db.backends.mysql",
+    #     "HOST":'localhost',
+    #     "PORT":3306,
+    #     "USER":'root',
+    #     "PASSWORD":"123456",
+    #     "NAME": "django_tdrive",
+    # }
 }
 
 

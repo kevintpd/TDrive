@@ -18,6 +18,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
+    path("", include('index.urls')),
     path("admin/", admin.site.urls),
     path("api-auth/", include('rest_framework.urls')),
     path("", include('accounts.urls')),
@@ -25,5 +26,4 @@ urlpatterns = [
     path("", include('shareapi.urls')),
     path("", include('autolabel.urls')),
 
-    path("docs/", include_docs_urls(title="接口文档", description="总路由"))
 ]
